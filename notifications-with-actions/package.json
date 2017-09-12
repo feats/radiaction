@@ -1,0 +1,12 @@
+{
+  "name": "notifications",
+  "version": "1.0.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "scripts": {},
+  "dependencies": {
+    "change-case": "^3.0.1",
+    "kafka-node": "^2.2.2"
+  },
+  "devDependencies": {}
+}
