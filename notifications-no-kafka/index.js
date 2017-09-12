@@ -13,9 +13,9 @@ process.on('exit', () => {
 });
 
 async function produce() {
-  await buyChinChin('pad-thai')
-  await buyChinChin(123, 'myKey')
-  await buyCaliforniaKitchen(['san diego', 'mexicali'])
+  await buyChinChin('pad-thai', 'Carlo')
+  await buyCaliforniaKitchen('san diego', 'Victor')
+  await buyCaliforniaKitchen('mexicali', 'bo')
 }
 
 async function consume() {
@@ -23,6 +23,6 @@ async function consume() {
 }
 
 if (require.main === module) {
-  produce();
-  // consume();
+  consume();
+  setInterval(produce, 2000);
 }
