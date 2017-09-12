@@ -1,22 +1,23 @@
 const { ConsumerGroup } = require('kafka-node');
-const topics = require('./topics');
+const { KAFKA_HOST } = require('./config');
 const onMessage = require('./onMessage');
 
-const kafkaHost = 'localhost:9092';
-const consumer = new ConsumerGroup(
-  {
-    kafkaHost, // TODO! configure kafkaHost to use ENV vars
-    protocol: ['roundrobin'],
-  },
-  Object.values(topics),
-);
+for (const key of Object.keys(onMessage)) {
+  const consumer = new ConsumerGroup(
+    {
+      kafkaHost: KAFKA_HOST,
+      protocol: ['roundrobin'],
+    },
+    key,
+  );
 
-consumer.client.on('ready', () => {
-  console.log(`Consuming topics: ${Object.values(topics)}`);
-});
+  consumer.client.on('ready', () => {
+    console.log(`Consuming topic '${key}'`);
+  });
 
-consumer.on('error', (err) => {
-  throw err;
-});
+  consumer.on('error', (err) => {
+    throw err;
+  });
 
-consumer.on('message', onMessage);
+  consumer.on('message', message => onMessage[key](message.value, message.key));
+}
