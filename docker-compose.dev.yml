@@ -1,0 +1,404 @@
+version: '2.1'
+
+networks:
+  back-tier:
+    driver: bridge
+  # front-tier:
+  #   driver: bridge
+
+services:
+  zookeeper:
+    image: wurstmeister/zookeeper
+    container_name: c-zookeeper
+    ports:
+      - "2181:2181"
+    restart: unless-stopped
+  kafka:
+    image: wurstmeister/kafka
+    container_name: c-kafka
+    ports:
+      - "9092:9092"
+    environment:
+      HOST_IP: ${HOST_IP}
+      KAFKA_ADVERTISED_HOST_NAME: ${HOST_IP}
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+  proxy:
+    image: node:7
+    container_name: c-proxy
+    command: /bin/sh -c ./-elastic-proxy-prerun.sh
+    working_dir: ${CONTAINER_INDEX_ROOT}/elastic-proxy
+    volumes:
+      - ./elastic-proxy:${CONTAINER_INDEX_ROOT}/elastic-proxy
+      - ./src/imports:${CONTAINER_INDEX_ROOT}/src/imports
+    ports:
+      - "${ELASTIC_PROXY_PORT}:${ELASTIC_PROXY_PORT}"
+    depends_on:
+      es:
+        condition: service_healthy
+    env_file:
+      - ./.env
+    networks:
+      - back-tier
+    healthcheck:
+      test: "wget -q -O - http://localhost:${ELASTIC_PROXY_PORT}/ping"
+      interval: 1s
+      timeout: 30s
+      retries: 300
+    restart: unless-stopped
+
+  conn:
+    image: quadric/mongo-connector:2.5
+    container_name: c-conn
+    # command: mongo-connector -c /mongo-connector.config.json
+    # command: mongo-connector --main=${MONGO_URL} --namespace-set='meteor.brands,meteor.works' --doc-manager=elastic2_doc_manager --target-url=${ELASTIC_HOST} --oplog-ts=/oplog.timestamp --continue-on-error --stdout # --verbose # --auto-commit-interval=5 # --logfile=/mongo-connector.log
+    # command: mongo-connector -m ${MONGO_URL} -n 'meteor.brands,meteor.works' -d elastic2_doc_manager -t ${ELASTIC_HOST} --o /oplog.timestamp --continue-on-error --stdout # -v # --auto-commit-interval=5 # -w /mongo-connector.log
+    # volumes:
+    #   - ./configuration-settings/${ENV}/mongo-connector.config.json:/mongo-connector.config.json
+    depends_on:
+      mongo-0:
+        condition: service_healthy
+      # analytics:
+      #   condition: service_healthy
+      es:
+        condition: service_healthy
+      proxy:
+        condition: service_healthy
+    env_file:
+      - ./.env
+    networks:
+      - back-tier
+    # healthcheck:
+    #   test: "if cat /oplog.timestamp | jq '.[0]' | grep \"${MONGO_REPLICA_SET_NAME}\" > /dev/null ; then exit 0; else exit 1; fi"
+    #   interval: 1s
+    #   timeout: 30s
+    #   retries: 300
+    restart: unless-stopped
+
+  es:
+    image: elasticsearch:2.4
+    container_name: c-es
+    command: -Des.http.port=9200 -Des.http.cors.allow-origin="/.*/" -Des.http.cors.enabled=true -Des.http.cors.allow-headers="X-Requested-With, X-Auth-Token, Content-Type, Content-Length, Authorization, Access-Control-Allow-Origin" -Des.http.cors.allow-credentials=true -Des.http.cors.allow-methods="GET, POST, PATCH, PUT, DELETE, OPTIONS" -Des.http.host="0.0.0.0" -Des.network.host="0.0.0.0"
+    # env_file:
+    #   - ./.env
+    # volumes:
+    #   # - ./configuration-settings/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    #   # # - ./configuration-settings/elasticsearch.yml:/etc/elasticsearch/elasticsearch.yml
+    ports:
+      - "${ELASTIC_SEARCH_PORT}:${ELASTIC_SEARCH_PORT}"
+      # - "9300:9300"
+    networks:
+      - back-tier
+    healthcheck:
+      test: "wget -q -O - http://localhost:${ELASTIC_SEARCH_PORT}/_cat/health"
+      interval: 1s
+      timeout: 30s
+      retries: 300
+    restart: unless-stopped
+
+  analytics:
+    image: node:7
+    container_name: c-analytics
+    command: /bin/sh -c ./-analytics-prerun.sh
+    working_dir: ${CONTAINER_INDEX_ROOT}/analytics-engine
+    volumes:
+      - ./analytics-engine:${CONTAINER_INDEX_ROOT}/analytics-engine
+    depends_on:
+      mongo-0:
+        condition: service_healthy
+    env_file:
+      - ./.env
+    networks:
+      - back-tier
+    healthcheck:
+      test: "[ -f /health.check ] && exit 0 || exit 1"
+      interval: 1s
+      timeout: 30s
+      retries: 300
+    restart: unless-stopped
+
+  mongo-0:
+    image: mongo:3.4
+    container_name: c-mongo-0
+    command: /bin/bash -c "(mongod --noprealloc --smallfiles --replSet ${MONGO_REPLICA_SET_NAME} --dbpath /data/db --nojournal --oplogSize 128 --noauth --bind_ip 0.0.0.0 --rest --httpinterface) & /init-db.sh & tail -f /proc/loadavg & wait"
+    command: /scripts/mongo-run.sh
+    working_dir: /scripts
+    build:
+      context: ./dump
+      dockerfile: ./Dockerfile-mongo
+      # args:
+      #   ENV: ${ENV}
+    volumes:
+      - ${MONGO_DUMP_PATH:-./dump/meteor}:${MONGO_CONTAINER_DUMP_PATH:-/db-dump}
+      - ./dump/scripts:/scripts
+    env_file:
+      - ./.env
+    # environment:
+    #   MONGO_BIND_IP: "0.0.0.0"
+    ports:
+      - "27017:27017"
+      # - "28017:28017"
+    # depends_on:
+    #   mongo-1:
+    #     condition: service_healthy
+    #   mongo-2:
+    #     condition: service_healthy
+    networks:
+      - back-tier
+    healthcheck:
+      test: "[ -f /data/health.check ] && exit 0 || exit 1"
+      interval: 1s
+      timeout: 30s
+      retries: 300
+    restart: unless-stopped
+
+  # mongo-1:
+  #   image: quadric/mongo:3.4
+  #   container_name: c-mongo-1
+  #   command: mongod --noprealloc --smallfiles --replSet ${MONGO_REPLICA_SET_NAME} --dbpath /data/db --nojournal --oplogSize 128 --noauth --rest --httpinterface
+  #   # ports:
+  #   #   - "27018:27017"
+  #     # - "28018:28017"
+  #   networks:
+  #     - back-tier
+  #   healthcheck:
+  #     test: "curl http://localhost:28017/serverStatus"
+  #     interval: 1s
+  #     timeout: 30s
+  #     retries: 300
+  #   restart: unless-stopped
+
+  # mongo-2:
+  #   image: quadric/mongo:3.4
+  #   container_name: c-mongo-2
+  #   command: mongod --noprealloc --smallfiles --replSet ${MONGO_REPLICA_SET_NAME} --dbpath /data/db --nojournal --oplogSize 128 --noauth --rest --httpinterface
+  #   # ports:
+  #   #   - "27019:27017"
+  #     # - "28019:28017"
+  #   networks:
+  #     - back-tier
+  #   healthcheck:
+  #     test: "curl http://localhost:28017/serverStatus"
+  #     interval: 1s
+  #     timeout: 30s
+  #     retries: 300
+  #   restart: unless-stopped
+
+  # jobs:
+  #   # image: quadric/i-jobs-dev:latest
+  #   image: node:7
+  #   container_name: c-jobs
+  #   # command: /bin/bash -c "while true; do if curl -sf http://${HOST_IP}:${METEOR_PORT} > /dev/null; then break; else echo -n '.'; sleep 1; fi done; yarn dev"
+  #   # command: yarn dev
+  #   # command: /bin/bash -c "yarn install && yarn dev"
+  #   command: /bin/sh -c ./-jobs-prerun.sh
+  #   # build:
+  #   #   context: .
+  #   #   dockerfile: ./Dockerfile-jobs.dev
+  #   #     args:
+  #   #       CONTAINER_INDEX_ROOT: ${CONTAINER_INDEX_ROOT}
+  #   working_dir: ${CONTAINER_INDEX_ROOT}/jobs
+  #   volumes:
+  #     - ./jobs:${CONTAINER_INDEX_ROOT}/jobs
+  #     - ./src/imports:${CONTAINER_INDEX_ROOT}/src/imports
+  #   depends_on:
+  #     conn:
+  #       condition: service_healthy
+  #     meteor-shadow:
+  #       condition: service_healthy
+  #     # meteor:
+  #     #   condition: service_healthy
+  #     # proxy:
+  #     #   condition: service_healthy
+  #   env_file:
+  #     - ./.env
+  #   environment:
+  #     METEOR_DDP: 'http://${HOST_IP}:${METEOR_PORT}'
+  #     HOST_IP: ${HOST_IP}
+  #   ports:
+  #     - "${JOBS_PORT}:${JOBS_PORT}"
+  #   networks:
+  #     - back-tier
+  #     # - default
+  #   healthcheck:
+  #     test: "wget -q -O - http://localhost:${JOBS_PORT}"
+  #     interval: 1s
+  #     timeout: 30s
+  #     retries: 300
+  #   restart: unless-stopped
+
+  # storybook:
+  #   image: node:7
+  #   container_name: c-storybook
+  #   volumes:
+  #     - ./src:${CONTAINER_INDEX_ROOT}/src
+  #   working_dir: ${CONTAINER_INDEX_ROOT}/src
+  #   command: npm run storybook
+  #   # command: /bin/bash -c "while true; do if curl -sf http://${HOST_IP}:${METEOR_PORT} > /dev/null; then break; else echo -n '.'; sleep 1; fi done; npm run storybook"
+  #   expose:
+  #     - "${STORYBOOK_PORT}"
+  #   ports:
+  #     - "${STORYBOOK_PORT}:${STORYBOOK_PORT}"
+  #   # depends_on:
+  #   #   conn:
+  #   #     condition: service_started
+  #   #   # meteor-shadow:
+  #   #   #   condition: service_healthy
+  #   # env_file:
+  #   #   - ./.env
+  #   environment:
+  #     HOST_IP: ${HOST_IP}
+  #     STORYBOOK_PORT: ${STORYBOOK_PORT}
+  #   # networks:
+  #   #   - default
+  #   #   # - front-tier
+  #   healthcheck:
+  #     test: "wget -q -O - http://localhost:${STORYBOOK_PORT}"
+  #     interval: 1s
+  #     timeout: 30s
+  #     retries: 300
+  #   restart: unless-stopped
+
+  # kibana:
+  #   # image: docker.elastic.co/kibana/kibana:5.3.0
+  #   image: kibana:4.6.0
+  #   container_name: c-kibana
+  #   env_file:
+  #     - ./.env
+  #   environment:
+  #     SERVER_NAME: meteor
+  #     ELASTICSEARCH_URL: http://es:9200
+  #   depends_on:
+  #     es:
+  #       condition: service_healthy
+  #   ports:
+  #     - "5601:5601"
+  #   networks:
+  #     - back-tier
+  #   healthcheck:
+  #     test: "wget -q -O - http://localhost:5601"
+  #     interval: 1s
+  #     timeout: 30s
+  #     retries: 300
+  #   restart: unless-stopped
+
+  # meteor-shadow:
+  #   image: quadric/alpine:latest
+  #   container_name: c-meteor-shadow
+  #   command: tail -f /proc/loadavg
+  #   depends_on:
+  #     proxy:
+  #       condition: service_healthy
+  #     conn:
+  #       condition: service_healthy
+  #   environment:
+  #     HOST_IP: ${HOST_IP}
+  #   networks:
+  #     - default
+  #   # network_mode: "host"
+  #   healthcheck:
+  #     test: "wget -q -O - http://${HOST_IP}:${METEOR_PORT}"
+  #     interval: 1s
+  #     timeout: 100s
+  #     retries: 300
+  #   restart: unless-stopped
+
+  # meteor:
+  #   image: quadric/i-meteor-dev:latest
+  #   container_name: c-meteor
+  #   command: npm start
+  #   build:
+  #     context: .
+  #     dockerfile: ./Dockerfile-meteor
+  #     args:
+  #       CONTAINER_INDEX_ROOT: ${CONTAINER_INDEX_ROOT}
+  #   ports:
+  #     - "${METEOR_PORT}:${METEOR_PORT}"
+  #     # - "3001:3001"
+  #   depends_on:
+  #     conn:
+  #       condition: service_healthy
+  #     mongo-0:
+  #       condition: service_healthy
+  #     proxy:
+  #       condition: service_healthy
+  #   volumes:
+  #     - ./src/package.json:${CONTAINER_INDEX_ROOT}/src/package.json
+  #   env_file:
+  #     - ./.env
+  #   # environment:
+  #   #   ENV: ${ENV}
+  #   #   MONGO_URL: 'mongodb://mongo-0:27017/meteor?replicaSet=${MONGO_REPLICA_SET_NAME}&readPreference=primaryPreferred&w=majority'
+  #   #   # MONGO_URL: 'mongodb://mongo-0:27017,mongo-1:27017,mongo-2:27017/meteor?replicaSet=rs0&readPreference=primaryPreferred&w=majority'
+  #   networks:
+  #     - back-tier
+  #     # - front-tier
+  #   restart: unless-stopped
+
+  # meteor:
+  #   image: ulexus/meteor
+  #   # image: golden/meteor-dev
+  #   container_name: c-meteor
+  #   command: npm install
+  #   ports:
+  #     - "${METEOR_PORT}:80"
+  #     # - "3001:3001"
+  #   env_file:
+  #     - ./.env
+  #   # environment:
+  #   #   ENV: ${ENV}
+  #   #   ROOT_URL: 'http://localhost:${METEOR_PORT}'
+  #   #   MONGO_URL: 'mongodb://mongo-0:27017/meteor?replicaSet=${MONGO_REPLICA_SET_NAME}\\&readPreference=primaryPreferred\\&w=majority\\&authSource=admin'
+  #   #   # MONGO_URL: 'mongodb://mongo-0:27017,mongo-1:27017,mongo-2:27017/meteor?replicaSet=rs0\\&readPreference=primaryPreferred\\&w=majority\\&authSource=admin'
+  #   #   MONGO_OPLOG_URL: 'mongodb://mongo-0:27017/local?replicaSet=${MONGO_REPLICA_SET_NAME}\\&authSource=admin'
+  #   #   # MONGO_OPLOG_URL: 'mongodb://mongo-0:27017,mongo-1:27018,mongo-2:27019/local?replicaSet=rs0\\&authSource=admin'
+  #   volumes:
+  #     - "${PWD}/src:/home/meteor/src"
+  #     # - "${PWD}/src:/app"
+  #   depends_on:
+  #     conn:
+  #       condition: service_healthy
+  #     mongo-0:
+  #       condition: service_healthy
+  #     proxy:
+  #       condition: service_healthy
+  #   networks:
+  #     - back-tier
+  #   restart: unless-stopped
+
+  # dejavu:
+  #   image: appbaseio/dejavu
+  #   container_name: c-dejavu
+  #   ports:
+  #     - 1358:1358
+  #   # depends_on:
+  #   #   es:
+  #   #     condition: service_healthy
+  #   # networks:
+  #   #   - back-tier
+  #   healthcheck:
+  #     test: "wget -q -O - http://localhost:1358"
+  #     interval: 1s
+  #     timeout: 30s
+  #     retries: 300
+  #   restart: unless-stopped
+
+  # mirage:
+  #   image: appbaseio/mirage
+  #   container_name: c-mirage
+  #   ports:
+  #     - 3030:3030
+  #   # depends_on:
+  #   #   es:
+  #   #     condition: service_healthy
+  #   # networks:
+  #   #   - back-tier
+  #   healthcheck:
+  #     test: "wget -q -O - http://localhost:3030"
+  #     interval: 1s
+  #     timeout: 30s
+  #     retries: 300
+  #   restart: unless-stopped
