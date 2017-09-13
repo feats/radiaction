@@ -1,10 +1,15 @@
 const { SimpleConsumer, LATEST_OFFSET } = require('no-kafka');
-const { RESULT_SUFFIX, WAITER_BEHAVIOUR_ENABLED, WAITER_TIMEOUT } = require('./config');
+const {
+  IDLE_TIMEOUT,
+  RESULT_SUFFIX,
+  WAITER_BEHAVIOUR_ENABLED,
+  WAITER_TIMEOUT,
+} = require('./config');
 
 const records = {};
 const listeners = {};
 
-const consumer = new SimpleConsumer();
+const consumer = new SimpleConsumer({ idleTimeout: IDLE_TIMEOUT });
 if (WAITER_BEHAVIOUR_ENABLED) {
   consumer.init();
 }

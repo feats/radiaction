@@ -1,12 +1,12 @@
 const { Producer, SimpleConsumer, LATEST_OFFSET } = require('no-kafka');
 const reactions = require('../reactions');
-const { RESULT_SUFFIX } = require('./config');
+const { RESULT_SUFFIX, IDLE_TIMEOUT, WAITER_BEHAVIOUR_ENABLED } = require('./config');
 
 const producer = new Producer();
 producer.init();
 
 for (const key of Object.keys(reactions)) {
-  const consumer = new SimpleConsumer();
+  const consumer = new SimpleConsumer({ idleTimeout: IDLE_TIMEOUT });
   consumer.init().then(() => {
     consumer.subscribe(key, 0, { time: LATEST_OFFSET }, (messageSet, topic, partition) => {
       messageSet.forEach(async (m) => {
@@ -15,14 +15,16 @@ for (const key of Object.keys(reactions)) {
           m.message.key && m.message.key.toString('utf8'),
         );
 
-        await producer.send({
-          topic: `${key}${RESULT_SUFFIX}`,
-          partition,
-          message: {
-            value: result || '',
-            key: m.offset,
-          },
-        });
+        if (WAITER_BEHAVIOUR_ENABLED) {
+          await producer.send({
+            topic: `${key}${RESULT_SUFFIX}`,
+            partition,
+            message: {
+              value: result || '',
+              key: m.offset,
+            },
+          });
+        }
       });
     });
   });
