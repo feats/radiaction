@@ -1,11 +1,13 @@
 const { SimpleConsumer, LATEST_OFFSET } = require('no-kafka');
-const { RESULT_SUFFIX, WAITER_TIMEOUT } = require('./config');
+const { RESULT_SUFFIX, WAITER_BEHAVIOUR_ENABLED, WAITER_TIMEOUT } = require('./config');
 
 const records = {};
 const listeners = {};
 
 const consumer = new SimpleConsumer();
-consumer.init();
+if (WAITER_BEHAVIOUR_ENABLED) {
+  consumer.init();
+}
 
 function setup(key) {
   consumer.subscribe(
@@ -56,6 +58,10 @@ function spread({ topic, partition, offset }) {
 }
 
 module.exports = function wrap(action) {
+  if (!WAITER_BEHAVIOUR_ENABLED) {
+    return action;
+  }
+
   setup(action.name);
 
   const newAction = async (...args) => {
