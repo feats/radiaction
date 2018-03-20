@@ -1,0 +1,30 @@
+{
+  "name": "@quadric/radiaction",
+  "version": "1.0.0",
+  "author": "Quadric ApS",
+  "license": "UNLICENSED",
+  "publishConfig": {
+    "registry": "http://localhost:4873"
+  },
+  "main": "build/index.js",
+  "files": [
+    "build/"
+  ],
+  "scripts": {
+    "build:clean": "if [ -d build ] ; then rm -rf build ; fi",
+    "build": "babel src --source-maps --out-dir ./build --ignore node_modules,build > /dev/null",
+    "prepublish": "if [ ! -d build ] ; then yarn build; else in-publish && (yarn build:clean && yarn build) || not-in-publish; fi"
+  },
+  "dependencies": {
+    "chalk": "^2.3.2",
+    "change-case": "^3.0.2",
+    "kafka-node": "^2.4.1",
+    "lodash": "^4.17.5",
+    "no-kafka": "^3.2.8"
+  },
+  "devDependencies": {
+    "babel-cli": "~6.26.0",
+    "babel-plugin-transform-object-rest-spread": "~6.26.0",
+    "babel-preset-env": "~1.6.1"
+  }
+}
