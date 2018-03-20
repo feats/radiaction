@@ -14,14 +14,12 @@ function topicfy(moduleKey, action) {
   return action
 }
 
-module.exports = (moduleKey, descriptor) => {
-  if (typeof descriptor === 'function') {
-    return topicfy(moduleKey, descriptor)
-  }
+module.exports = moduleKey => descriptor => {
+  const result = {}
 
   for (const key of Object.keys(descriptor)) {
-    descriptor[key] = topicfy(moduleKey, descriptor[key])
+    result[key] = topicfy(moduleKey, descriptor[key])
   }
 
-  return descriptor
+  return result
 }

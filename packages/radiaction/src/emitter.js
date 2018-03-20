@@ -1,10 +1,10 @@
 const { Producer } = require('no-kafka')
+const { keepName } = require('./helpers')
 
-module.exports = function wrap(action) {
+function wrap(action) {
   const producer = new Producer()
   producer.init()
 
-  // close connections when process is killed.
   process.on('exit', () => {
     producer.close()
   })
@@ -15,7 +15,15 @@ module.exports = function wrap(action) {
       message: action.apply(action, args),
     })
 
-  Object.defineProperty(newAction, 'name', { value: action.name })
-  newAction.toString = () => newAction.name
-  return newAction
+  return keepName(newAction, action)
+}
+
+module.exports = descriptor => {
+  const result = {}
+
+  for (const key of Object.keys(descriptor)) {
+    result[key] = wrap(descriptor[key])
+  }
+
+  return result
 }

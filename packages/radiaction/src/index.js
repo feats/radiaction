@@ -1,3 +1,4 @@
+export { flowRight as compose } from 'lodash'
 export { default as createTopics } from './createTopics'
 export { default as emitter } from './emitter'
 export { default as runner } from './runner'

@@ -1,7 +1,7 @@
-const { topicfy } = require('@quadric/radiaction')
+const { compose, emitter, waiter, topicfy } = require('@quadric/radiaction')
 const { MODULE_KEY } = require('./definitions')
 
-module.exports = topicfy(MODULE_KEY, {
+const actions = {
   buyChinChin(message, key = null) {
     console.log(`requesting a '${message}' for '${key}' at Chin-Chin`)
 
@@ -12,4 +12,6 @@ module.exports = topicfy(MODULE_KEY, {
 
     return { key, value: message }
   },
-})
+}
+
+module.exports = compose(waiter, emitter, topicfy(MODULE_KEY))(actions)

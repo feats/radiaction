@@ -8,7 +8,7 @@ module.exports = {
       return `Sorry ${key}, only Victor can have a pad-thai`
     }
 
-    return `'${value}' ordered ${key === 'Ahmed' ? 'with extra pork ' : ' '}for ${key} at ChinChin`
+    return `'${value}' ordered ${key === 'Ahmed' ? 'with NO pork ' : ' '}for ${key} at ChinChin`
   },
   [buyCaliforniaKitchen](value, key) {
     console.log(`providing "buyCaliforniaKitchen" with:`, { value, key })

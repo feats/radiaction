@@ -1,10 +1,5 @@
 const _ = require('lodash')
-const { buyChinChin, buyCaliforniaKitchen } = require('./triggers')
-
-// catches uncaught rejections
-process.on('unhandledRejection', error => {
-  throw error
-})
+const { buyChinChin, buyCaliforniaKitchen } = require('./actions')
 
 async function produce() {
   let order
@@ -24,5 +19,9 @@ async function main() {
 }
 
 if (require.main === module) {
+  process.on('unhandledRejection', error => {
+    throw error
+  })
+
   main()
 }

@@ -1,4 +1,5 @@
 const { SimpleConsumer, LATEST_OFFSET } = require('no-kafka')
+const { keepName } = require('./helpers')
 const {
   IDLE_TIMEOUT,
   RESULT_SUFFIX,
@@ -8,14 +9,22 @@ const {
 
 const records = {}
 const listeners = {}
+let initiated = {}
 
-function setup(key) {
-  const consumer = new SimpleConsumer({ idleTimeout: IDLE_TIMEOUT })
-  if (WAITER_BEHAVIOUR_ENABLED) {
-    consumer.init()
+async function setup(key) {
+  if (initiated[key]) {
+    return true
   }
 
-  consumer.subscribe(
+  initiated[key] = true
+  const consumer = new SimpleConsumer({ idleTimeout: IDLE_TIMEOUT })
+  consumer.init()
+
+  process.on('exit', () => {
+    consumer.close()
+  })
+
+  return consumer.subscribe(
     `${key}${RESULT_SUFFIX}`,
     0,
     { time: LATEST_OFFSET },
@@ -36,11 +45,6 @@ function setup(key) {
       })
     }
   )
-
-  // close connections when process is killed.
-  process.on('exit', () => {
-    consumer.close()
-  })
 }
 
 function spread({ topic, partition, offset }) {
@@ -67,20 +71,27 @@ function spread({ topic, partition, offset }) {
   })
 }
 
-module.exports = function wrap(action) {
+function wrap(action) {
   if (!WAITER_BEHAVIOUR_ENABLED) {
     return action
   }
 
-  setup(action.name)
-
   const newAction = async (...args) => {
+    await setup(action.name)
     const output = await action.apply(action, args)
 
     return await spread(output[0])
   }
 
-  Object.defineProperty(newAction, 'name', { value: action.name })
-  newAction.toString = () => newAction.name
-  return newAction
+  return keepName(newAction, action)
+}
+
+module.exports = descriptor => {
+  const result = {}
+
+  for (const key of Object.keys(descriptor)) {
+    result[key] = wrap(descriptor[key])
+  }
+
+  return result
 }
