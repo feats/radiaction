@@ -1,0 +1,17 @@
+{
+  "name": "reactions-runner",
+  "version": "1.0.0",
+  "private": true,
+  "author": "Quadric ApS",
+  "license": "UNLICENSED",
+  "publishConfig": {
+    "registry": "http://localhost:4873"
+  },
+  "scripts": {
+    "start": "babel-node index.js"
+  },
+  "dependencies": {
+    "@quadric/radiaction": "~1.0.0",
+    "glob": "~7.1.2"
+  }
+}
