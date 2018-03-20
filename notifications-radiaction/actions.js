@@ -2,15 +2,15 @@ const { compose, emitter, waiter, topicfy } = require('@quadric/radiaction')
 const { MODULE_KEY } = require('./definitions')
 
 const actions = {
-  buyChinChin(message, key = null) {
-    console.log(`requesting a '${message}' for '${key}' at Chin-Chin`)
+  buyChinChin(value, key = null) {
+    console.log(`requesting a '${value}' for '${key}' at Chin-Chin`)
 
-    return { key, value: message }
+    return { key, value }
   },
-  buyCaliforniaKitchen(message, key = null) {
-    console.log(`requesting a '${message}' for '${key}' at California Kitchen`)
+  buyCaliforniaKitchen(value, key = null) {
+    console.log(`requesting a '${value}' for '${key}' at California Kitchen`)
 
-    return { key, value: message }
+    return { key, value }
   },
 }
 
