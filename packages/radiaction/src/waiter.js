@@ -19,33 +19,38 @@ async function setup(key) {
 
   initiated[key] = true
   const consumer = new SimpleConsumer({ idleTimeout: IDLE_TIMEOUT })
-  consumer.init()
+  await consumer.init()
 
   process.on('exit', () => {
     consumer.close()
   })
 
-  return consumer.subscribe(
-    `${key}${RESULT_SUFFIX}`,
-    0,
-    { time: LATEST_OFFSET },
-    (messageSet, topic, partition) => {
-      messageSet.forEach(({ message }) => {
-        if (!message.key) {
-          throw new Error(`waiters can't handle falsy keys`)
-        }
+  await consumer
+    .subscribe(
+      `${key}${RESULT_SUFFIX}`,
+      0,
+      { time: LATEST_OFFSET },
+      (messageSet, topic, partition) => {
+        messageSet.forEach(({ message }) => {
+          if (!message.key) {
+            throw new Error(`waiters can't handle falsy keys`)
+          }
 
-        const identifier = `${topic}:${partition}:${message.key.toString('utf8')}`
-        const value = message.value && message.value.toString('utf8')
+          const identifier = `${topic}:${partition}:${message.key.toString('utf8')}`
+          const value = message.value && message.value.toString('utf8')
 
-        if (listeners[identifier]) {
-          listeners[identifier](value)
-        } else {
-          records[identifier] = value // TODO! remove records after a while)
-        }
-      })
-    }
-  )
+          if (listeners[identifier]) {
+            listeners[identifier](value)
+          } else {
+            records[identifier] = value // TODO! remove records after a while)
+          }
+        })
+      }
+    )
+    .catch(e => {
+      initiated[key] = false
+      throw new Error(e.message)
+    })
 }
 
 function spread({ topic, partition, offset }) {

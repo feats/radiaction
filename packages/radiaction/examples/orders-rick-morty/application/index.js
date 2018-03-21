@@ -17,8 +17,16 @@ async function produce() {
 
 async function main() {
   while (true) {
-    await produce()
+    try {
+      await produce()
+    } catch (e) {
+      console.error(e)
+    }
   }
 }
 
 main()
+
+process.on('unhandledRejection', error => {
+  throw error
+})

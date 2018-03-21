@@ -29,3 +29,7 @@ async function main() {
 }
 
 main()
+
+process.on('unhandledRejection', error => {
+  throw error
+})
