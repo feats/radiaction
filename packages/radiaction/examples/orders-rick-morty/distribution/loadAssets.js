@@ -2,9 +2,7 @@ const glob = require('glob')
 
 const log = (files, entries) =>
   console.log(
-    `${files.length} file(s) were found containing ${
-      Object.keys(entries).length
-    } entries.`
+    `${files.length} file(s) were found containing ${Object.keys(entries).length} entries.`
   )
 
 module.exports = path => {
