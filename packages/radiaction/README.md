@@ -12,11 +12,32 @@
 
 * **Separation of concerns:** DevOps don't need to interfere on how developers are writting their functions. Scaling and even changing the infrasctructure can be done independently by DevOps with no change in the application code.
 
+<p align="center">
+  [ <a href="./examples">Check  examples 👌</a> ]
+  |
+  [ <a href="#api">Read the API 🤓</a> ]
+</p>
+
 ![divider](.github/divider.png)
 
-[Check our examples](./examples)
-
 ## API
+
+<!-- @import "[TOC]" {cmd="toc" depthFrom=3 depthTo=6 orderedList=false} -->
+
+<!-- code_chunk_output -->
+
+* [Application side](#application-side)
+  _ [Higher-order functions](#higher-order-functions)
+  _ [emitter](#emitter)
+  _ [topicfy](#topicfy)
+  _ [waiter](#waiter)
+  _ [Utilities](#utilities)
+  _ [compose](#compose)
+* [Distributed side](#distributed-side)
+  _ [createTopics](#createtopics)
+  _ [runner](#runner)
+
+<!-- /code_chunk_output -->
 
 ### Application side
 
@@ -96,3 +117,9 @@ Start runners that will subscribe to the topics associated with each action. It 
 
 * execute the associated reaction
 * notify the broker that the output of the reaction is available.
+
+![divider](.github/divider.png)
+
+## Examples
+
+Take a look at the [examples](./examples) folder in order to see our available demos.
