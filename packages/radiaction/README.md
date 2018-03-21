@@ -33,8 +33,8 @@
 	* [Utilities](#utilities)
 		* [compose](#compose)
 * [Distributed side](#distributed-side)
-		* [createTopics](#createtopics)
-		* [runner](#runner)
+	* [createTopics](#createtopics)
+	* [runner](#runner)
 
 <!-- /code_chunk_output -->
 
