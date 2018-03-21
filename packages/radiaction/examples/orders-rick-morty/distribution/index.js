@@ -1,31 +1,18 @@
-const glob = require('glob')
-const path = require('path')
 const { createTopics, runner } = require('../../../src')
-const { CODEBASE_GLOB } = require('./config')
+const { ACTIONS_GLOB, REACTIONS_GLOB } = require('./config')
+const loadAssets = require('./loadAssets')
 
-function loadAssets() {
-  const files = glob.sync(CODEBASE_GLOB, { cwd: __dirname })
-  const modules = files.map(file => require(file))
-  const reactions = Object.assign({}, ...modules)
-  const actionTypes = Object.keys(reactions)
+async function processActions() {
+  await createTopics(loadAssets(ACTIONS_GLOB))
+}
 
-  return { files, reactions, actionTypes }
+async function processReactions() {
+  await runner(loadAssets(REACTIONS_GLOB))
 }
 
 async function main() {
-  const { files, reactions, actionTypes } = loadAssets()
-
-  console.log(
-    `${files.length} file(s) were found containing ${
-      actionTypes.length
-    } reaction(s) in total.`
-  )
-  console.log(`Setting up their distribution models.`)
-
-  await createTopics(actionTypes)
-  await runner(reactions)
-
-  console.log('All runners were initiated.')
+  await processActions()
+  await processReactions()
 }
 
 main()

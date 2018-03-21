@@ -1,3 +1,4 @@
 module.exports = {
-  CODEBASE_GLOB: '../*/reactions.js',
+  ACTIONS_GLOB: '../*/actions.js',
+  REACTIONS_GLOB: '../*/reactions.js',
 }
