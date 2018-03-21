@@ -1,5 +1,7 @@
 Example of a simple app that simulates Rick & Morty's family ordering sauces at McDonald's and going to family therapy.
 
+[![Rick & Morty's family ordering sauces at McDonald's and going to family therapy](https://j.gifs.com/gLV6M6.gif)](https://j.gifs.com/gLV6M6.gif)
+
 ## Plug and play
 
 Single command execution:
