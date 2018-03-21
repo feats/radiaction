@@ -1,3 +1,4 @@
+const _ = require('lodash')
 const { constantCase } = require('change-case')
 const { DELIMITER } = require('./config')
 
@@ -14,12 +15,5 @@ function topicfy(moduleKey, action) {
   return action
 }
 
-module.exports = moduleKey => descriptor => {
-  const result = {}
-
-  for (const key of Object.keys(descriptor)) {
-    result[key] = topicfy(moduleKey, descriptor[key])
-  }
-
-  return result
-}
+module.exports = moduleKey => descriptor =>
+  _.mapValues(descriptor, action => topicfy(moduleKey, action))

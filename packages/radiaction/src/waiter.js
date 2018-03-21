@@ -1,3 +1,4 @@
+const _ = require('lodash')
 const { SimpleConsumer, LATEST_OFFSET } = require('no-kafka')
 const { keepName } = require('./helpers')
 const {
@@ -86,12 +87,4 @@ function wrap(action) {
   return keepName(newAction, action)
 }
 
-module.exports = descriptor => {
-  const result = {}
-
-  for (const key of Object.keys(descriptor)) {
-    result[key] = wrap(descriptor[key])
-  }
-
-  return result
-}
+module.exports = descriptor => _.mapValues(descriptor, wrap)
