@@ -5,8 +5,11 @@ const { RESULT_SUFFIX, WAITER_BEHAVIOUR_ENABLED } = require('./config')
 
 export default actions =>
   new Promise((resolve, reject) => {
-    const producer = new Producer(new Client())
     let keys = Object.values(actions).map(action => action.toString())
+
+    if (!keys || !keys.length) {
+      throw new Error('no topics found to be created')
+    }
 
     if (WAITER_BEHAVIOUR_ENABLED) {
       keys = keys.concat(keys.map(key => `${key}${RESULT_SUFFIX}`))
@@ -20,8 +23,11 @@ export default actions =>
         .join('\n')
     )
 
+    const producer = new Producer(new Client())
+    producer.on('error', err => reject(err))
     producer.on('ready', () => {
-      producer.createTopics(keys, (err, output) => {
+      console.log('Producer ready.')
+      producer.createTopics(keys, true, (err, output) => {
         if (err) {
           reject(err)
         }
@@ -29,11 +35,13 @@ export default actions =>
         if (!output) {
           console.log(chalk.red.bold('WARNING! No data returned. It has probably failed.'))
         } else {
-          console.log('Topics created.')
-        }
-
-        if (!_.isEqual(output, keys)) {
-          console.log('Output:\n', chalk.red(output))
+          console.log('Topics created:')
+          console.log(
+            output
+              .map(x => chalk.green(x))
+              .map(x => `\t> ${x}`)
+              .join('\n')
+          )
         }
 
         producer.close()

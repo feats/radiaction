@@ -4,7 +4,7 @@ const { createTopics, runner } = require('../../../src')
 const { CODEBASE_GLOB } = require('./config')
 
 function loadAssets() {
-  const files = glob.sync(CODEBASE_GLOB).map(file => path.resolve(file))
+  const files = glob.sync(CODEBASE_GLOB, { cwd: __dirname })
   const modules = files.map(file => require(file))
   const reactions = Object.assign({}, ...modules)
   const actionTypes = Object.keys(reactions)
