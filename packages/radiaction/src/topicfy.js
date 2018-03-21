@@ -9,8 +9,14 @@ const naming = (moduleKey, fn) =>
   `${moduleKey}${DELIMITER}${constantCase(fn.name)}`.replace('/', DELIMITER)
 
 function topicfy(moduleKey, action) {
-  Object.defineProperty(action, 'name', { value: naming(moduleKey, action) })
-  action.toString = () => action.name
+  const topic = naming(moduleKey, action)
+
+  Object.defineProperty(action, 'name', { value: topic })
+  action.toString = () => topic
+  action.__radiaction = {
+    ...action.__radiaction,
+    topic,
+  }
 
   return action
 }

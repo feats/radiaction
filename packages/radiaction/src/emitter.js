@@ -16,6 +16,11 @@ function wrap(action) {
       message: action.apply(action, args),
     })
 
+  newAction.__radiaction = {
+    ...action.__radiaction,
+    emmit: true,
+  }
+
   return keepName(newAction, action)
 }
 

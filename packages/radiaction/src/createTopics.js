@@ -1,23 +1,23 @@
 const _ = require('lodash')
 const chalk = require('chalk')
 const { Client, Producer } = require('kafka-node')
-const { RESULT_SUFFIX, WAITER_BEHAVIOUR_ENABLED } = require('./config')
+const { RESULT_SUFFIX } = require('./config')
 
 export default actions =>
   new Promise((resolve, reject) => {
-    let keys = Object.values(actions).map(action => action.toString())
-
-    if (!keys || !keys.length) {
+    let topics = Object.values(actions).map(action => action.toString())
+    if (!topics || !topics.length) {
       throw new Error('no topics found to be created')
     }
 
-    if (WAITER_BEHAVIOUR_ENABLED) {
-      keys = keys.concat(keys.map(key => `${key}${RESULT_SUFFIX}`))
+    const waiters = Object.values(actions).filter(action => action.__radiaction.wait)
+    if (waiters.length) {
+      topics = topics.concat(waiters.map(action => `${action.name}${RESULT_SUFFIX}`))
     }
 
-    console.log(`Creating topics with the following keys:`)
+    console.log(`Creating topics with the following names:`)
     console.log(
-      keys
+      topics
         .map(x => chalk.yellow(x))
         .map(x => `\t* ${x}`)
         .join('\n')
@@ -27,7 +27,7 @@ export default actions =>
     producer.on('error', err => reject(err))
     producer.on('ready', () => {
       console.log('Producer ready.')
-      producer.createTopics(keys, true, (err, output) => {
+      producer.createTopics(topics, true, (err, output) => {
         if (err) {
           reject(err)
         }

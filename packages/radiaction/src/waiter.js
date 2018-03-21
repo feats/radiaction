@@ -1,12 +1,7 @@
 const _ = require('lodash')
 const { SimpleConsumer, LATEST_OFFSET } = require('no-kafka')
 const { keepName } = require('./helpers')
-const {
-  IDLE_TIMEOUT,
-  RESULT_SUFFIX,
-  WAITER_BEHAVIOUR_ENABLED,
-  WAITER_TIMEOUT,
-} = require('./config')
+const { IDLE_TIMEOUT, RESULT_SUFFIX, WAITER_TIMEOUT } = require('./config')
 
 const records = {}
 const listeners = {}
@@ -78,15 +73,16 @@ function spread({ topic, partition, offset }) {
 }
 
 function wrap(action) {
-  if (!WAITER_BEHAVIOUR_ENABLED) {
-    return action
-  }
-
   const newAction = async (...args) => {
     await setup(action.name)
     const output = await action.apply(action, args)
 
     return await spread(output[0])
+  }
+
+  newAction.__radiaction = {
+    ...action.__radiaction,
+    wait: true,
   }
 
   return keepName(newAction, action)
