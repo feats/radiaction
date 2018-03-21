@@ -1,9 +1,5 @@
 version: '2.1'
 
-networks:
-  back-tier:
-    driver: bridge
-
 services:
   zookeeper:
     image: wurstmeister/zookeeper
@@ -15,8 +11,7 @@ services:
     ports:
       - "9092:9092"
     environment:
-      # HOST_IP: ${HOST_IP}
-      # KAFKA_ADVERTISED_HOST_NAME: ${HOST_IP}
+      KAFKA_ADVERTISED_HOST_NAME: "${HOST_IP}"
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
     volumes:
