@@ -28,14 +28,21 @@ export default reactions => {
             m.message.key && m.message.key.toString('utf8')
           )
 
-          await producer.send({
-            topic: `${key}${RESULT_SUFFIX}`,
-            partition,
-            message: {
-              value: result || '',
-              key: m.offset,
-            },
-          })
+          producer
+            .send({
+              topic: `${key}${RESULT_SUFFIX}`,
+              partition,
+              message: {
+                value: result || '',
+                key: m.offset,
+              },
+            })
+            // .then(results =>
+            //   results.filter(result => result.error).map(result => throwError(result.error))
+            // )
+            .catch(e => {
+              throw new Error(e)
+            })
         })
       })
     })
