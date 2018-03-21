@@ -15,17 +15,7 @@ async function produce() {
   console.log('   ->', result, '\n')
 }
 
-async function main() {
-  while (true) {
-    try {
-      await produce()
-    } catch (e) {
-      console.error(e)
-    }
-  }
-}
-
-main()
+setInterval(produce, 200)
 
 process.on('unhandledRejection', error => {
   throw error

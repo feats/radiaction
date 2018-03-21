@@ -2,15 +2,15 @@ const { compose, emitter, waiter, topicfy } = require('../../../src')
 const { MODULE_KEY } = require('./definitions')
 
 const actions = {
-  buyMcDonalds(value, key = null) {
-    console.log(`requesting a '${value}' for '${key}' at McDonald's`)
+  buyMcDonalds(sauce, client = null) {
+    console.log(`requesting a '${sauce}' for '${client}' at McDonald's`)
 
-    return { value, key }
+    return { value: sauce, key: client }
   },
-  bringToFamilyTherapy(value) {
-    console.log(`requesting to bring '${value}' to family therapy`)
+  bringToFamilyTherapy(familyMember) {
+    console.log(`requesting to bring '${familyMember}' to family therapy`)
 
-    return { value }
+    return { value: familyMember }
   },
 }
 
