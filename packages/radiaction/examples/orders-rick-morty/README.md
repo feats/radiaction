@@ -17,7 +17,7 @@ Requirements:
 
 ## Code Structure
 
-* `/applications` contains the logic of the application (actions, reactions and a controller).
+* `/application` contains the logic of the application (actions, reactions and a controller).
 * `/distribution` contains the runners that will respond to the clients' actions, processing the reactions.
 
 ## Infrastructure

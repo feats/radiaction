@@ -2,7 +2,7 @@ const { compose, emitter, waiter, topicfy } = require('../../../src')
 const { MODULE_KEY } = require('./definitions')
 
 const actions = {
-  buyMcDonalds(sauce, client = null) {
+  buySauce(sauce, client = null) {
     console.log(`requesting a '${sauce}' for '${client}' at McDonald's`)
 
     return { value: sauce, key: client }

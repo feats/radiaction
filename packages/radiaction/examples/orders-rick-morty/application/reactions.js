@@ -1,9 +1,9 @@
-const { buyMcDonalds, bringToFamilyTherapy } = require('./actions')
+const { buySauce, bringToFamilyTherapy } = require('./actions')
 const { characters, sauces } = require('./definitions')
 
 module.exports = {
-  [buyMcDonalds](value, key) {
-    console.log(`providing "buyMcDonalds" for:`, { value, key })
+  [buySauce](value, key) {
+    console.log(`providing "buySauce" for:`, { value, key })
 
     if (value === sauces.SZECHUAN && key !== characters.RICK) {
       return `Sorry ${key}, only Rick can have a SzeChuan sauce`
