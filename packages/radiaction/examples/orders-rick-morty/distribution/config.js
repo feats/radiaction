@@ -1,4 +1,4 @@
 module.exports = {
-  ACTIONS_GLOB: '../*/actions.js',
-  REACTIONS_GLOB: '../*/reactions.js',
+  ACTIONS_GLOB: '../application/actions.js',
+  REACTIONS_GLOB: '../application/reactions.js',
 }

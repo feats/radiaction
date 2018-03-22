@@ -1,4 +1,4 @@
-const { compose, emitter, waiter, topicfy } = require('../../../src')
+const { compose, emitter, waiter, topicfy } = require('../../src')
 const { MODULE_KEY } = require('./definitions')
 
 const actions = {

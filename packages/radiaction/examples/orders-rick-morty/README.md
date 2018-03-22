@@ -10,15 +10,16 @@ Single command execution:
 $ ./start.sh
 ```
 
-Requirements:
+Dependencies:
 
+* npm
 * docker
 * xterm
 
 ## Code Structure
 
-* `/application` contains the logic of the application (actions, reactions and a controller).
-* `/distribution` contains the runners that will respond to the clients' actions, processing the reactions.
+* `/application` is a symlink to the [rick-morty-application](../_rick-morty-application). It contains the independent logic of the application (actions, reactions and a controller).
+* `/distribution` contains the runners that will respond to the applications' actions, processing the reactions.
 
 ## Infrastructure
 

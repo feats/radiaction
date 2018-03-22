@@ -1,5 +1,5 @@
 module.exports = {
-  MODULE_KEY: 'orders-rick-morty',
+  MODULE_KEY: 'rick-morty',
   characters: {
     RICK: 'Rick',
     MORTY: 'Morty',
