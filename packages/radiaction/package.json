@@ -16,11 +16,11 @@
     "prepublish": "if [ ! -d build ] ; then yarn build; else in-publish && (yarn build:clean && yarn build) || not-in-publish; fi"
   },
   "dependencies": {
-    "chalk": "^2.3.2",
-    "change-case": "^3.0.2",
-    "kafka-node": "^2.4.1",
-    "lodash": "^4.17.5",
-    "no-kafka": "^3.2.8"
+    "chalk": "~2.3.2",
+    "change-case": "~3.0.2",
+    "kafka-node": "~2.4.1",
+    "lodash": "~4.17.5",
+    "no-kafka": "~3.2.8"
   },
   "devDependencies": {
     "babel-cli": "~6.26.0",
