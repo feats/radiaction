@@ -1,20 +1,30 @@
-version: '2.1'
+version: '3.1'
+
+# networks:
+#   back-tier:
 
 services:
-  zookeeper:
-    image: wurstmeister/zookeeper
+  zoo1:
+    image: zookeeper
+    restart: always
+    hostname: zoo1
     ports:
-      - "2181:2181"
-    restart: unless-stopped
+      - 2181:2181
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_SERVERS: server.1=0.0.0.0:2888:3888 #server.2=0.0.0.0:2888:3888 server.3=0.0.0.0:2888:3888
+
   kafka:
     image: wurstmeister/kafka
     ports:
-      - "9092:9092"
+      - 9092:9092
     environment:
       KAFKA_ADVERTISED_HOST_NAME: "${HOST_IP}"
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ZOOKEEPER_CONNECT: zoo1:2181
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
+    # networks:
+    #   - back-tier
  
