@@ -5,9 +5,7 @@
 <sub>Radiaction makes it painless for Developers to write distributed apps and for DevOps to keep everything running.</sub>
 </p>
 <p align="center">
-  [ <a href="./examples">Check  examples 👌</a> ]
-  |
-  [ <a href="#api">Read the API 🤓</a> ]
+  [ <a href="./examples">Check  examples 👌</a> | <a href="#api">Read the API 🤓</a> ]
 </p>
 <br />
 
@@ -26,15 +24,15 @@
 <!-- code_chunk_output -->
 
 * [Application side](#application-side)
-	* [Higher-order functions](#higher-order-functions)
-		* [emitter](#emitter)
-		* [topicfy](#topicfy)
-		* [waiter](#waiter)
-	* [Utilities](#utilities)
-		* [compose](#compose)
+  _ [Higher-order functions](#higher-order-functions)
+  _ [emitter](#emitter)
+  _ [topicfy](#topicfy)
+  _ [waiter](#waiter)
+  _ [Utilities](#utilities)
+  _ [compose](#compose)
 * [Distributed side](#distributed-side)
-	* [createTopics](#createtopics)
-	* [runner](#runner)
+  _ [createTopics](#createtopics)
+  _ [runner](#runner)
 
 <!-- /code_chunk_output -->
 
