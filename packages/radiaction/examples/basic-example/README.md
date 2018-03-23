@@ -1,4 +1,4 @@
-Example of a simple app that simulates Rick & Morty's family ordering sauces at McDonald's and going to family therapy.
+Example of a simple distributed app that simulates Rick & Morty's family ordering sauces at McDonald's and going to family therapy.
 
 [![Screencast](https://j.gifs.com/9Q7OjP.gif)](https://j.gifs.com/gLV6M6.gif)
 

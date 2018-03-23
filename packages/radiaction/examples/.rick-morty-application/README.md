@@ -1,15 +1,12 @@
-Simplistic app to demonstrate the action/reaction model.
+Simplistic app to demonstrate the action/reaction model. It simulates Rick & Morty's family ordering sauces at McDonald's and going to family therapy.
 
-It's used as base to the construction of many examples, but it's not intended to be run alone. Check one of the following examples to see this app in action:
+It's used as the base of many examples, but, if ran alone, it will be hanging waiting for the reactions to be executed somewhere else. Instead, check one of the following examples to see this app running properly:
 
 * [basic-example](../basic-example)
 * [with-glob-loader](../with-glob-loader)
 * [with-webtask](../with-webtask)
 
 ## Code Structure
-
-* `/application` is a symlink to the ["Rick and Morty" application](../.rick-morty-application). It contains the independent logic of the application (actions, reactions and a controller).
-* `/distribution` contains the runners that will respond to the applications' actions, processing the reactions.
 
 * `actions.js` define the actions that can be called in this app
 * `definitions.js` constants and settings used in the app
