@@ -1,9 +1,12 @@
-<h1 align="center"><img src=".github/logo.png" width="200" /><br></h1>
+<h1 align="center"><img src=".github/logo.png" width="200" /></h1>
+<br>
 
 <p align="center">
 <strong>Powerful nodejs library for building seamless distributed applications.</strong><br />
 <sub>Radiaction makes it painless for Developers to write distributed apps and for DevOps to keep everything running.</sub>
 </p>
+<br>
+
 <p align="center">
   [ <a href="./examples">Check  examples 👌</a> | <a href="#api">Read the API 🤓</a> ]
 </p>
