@@ -23,7 +23,15 @@ export default actions =>
         .join('\n')
     )
 
-    const producer = new Producer(new Client())
+    const client = new Client()
+    const producer = new Producer(client)
+
+    // close connection when process is killed.
+    process.on('exit', () => {
+      client.close()
+      producer.close()
+    })
+
     producer.on('error', err => reject(err))
     producer.on('ready', () => {
       console.log('Producer ready.')
