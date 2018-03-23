@@ -1,6 +1,8 @@
 const _ = require('lodash')
 const { buySauce, bringToFamilyTherapy } = require('./actions')
-const { characters, sauces } = require('./definitions')
+
+const characters = ['Rick', 'Morty', 'Summer', 'Beth', 'Jerry']
+const sauces = ['SzeChuan', 'ketchup']
 
 async function produce() {
   let result
@@ -12,7 +14,7 @@ async function produce() {
   console.log('   ->', result, '\n')
 }
 
-setInterval(produce, 200)
+setInterval(produce, 1000)
 
 process.on('unhandledRejection', error => {
   throw error
