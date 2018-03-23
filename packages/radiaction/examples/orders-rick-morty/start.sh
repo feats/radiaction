@@ -4,7 +4,7 @@ set -eo pipefail
 HOST_IP=`../host-ip.sh`
 
 npm i
-export HOST_IP && docker-compose up -d
+export HOST_IP && docker-compose up -d #--force-recreate
 printf "giving extra time for containers to be fully up and running... \n\n\n"
 
 (sleep 2 && babel-node distribution) &

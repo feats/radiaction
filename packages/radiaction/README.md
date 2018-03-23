@@ -19,22 +19,16 @@
 
 ## API
 
-<!-- @import "[TOC]" {cmd="toc" depthFrom=3 depthTo=6 orderedList=false} -->
-
-<!-- code_chunk_output -->
-
 * [Application side](#application-side)
-  _ [Higher-order functions](#higher-order-functions)
-  _ [emitter](#emitter)
-  _ [topicfy](#topicfy)
-  _ [waiter](#waiter)
-  _ [Utilities](#utilities)
-  _ [compose](#compose)
+  * [Higher-order functions](#higher-order-functions)
+    * [emitter](#emitter)
+    * [topicfy](#topicfy)
+    * [waiter](#waiter)
+  * [Utilities](#utilities)
+    * [compose](#compose)
 * [Distributed side](#distributed-side)
-  _ [createTopics](#createtopics)
-  _ [runner](#runner)
-
-<!-- /code_chunk_output -->
+  * [createTopics](#createtopics)
+  * [runner](#runner)
 
 ### Application side
 
