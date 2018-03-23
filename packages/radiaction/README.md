@@ -1,4 +1,4 @@
-<h1 align="center"><img src=".github/representation.jpg" width="200" /><br>radi<font color="orange">action</font></h1>
+<h1 align="center"><img src=".github/logo.png" width="200" /><br></h1>
 
 <p align="center">
 <strong>Powerful nodejs library for building seamless distributed applications.</strong><br />
