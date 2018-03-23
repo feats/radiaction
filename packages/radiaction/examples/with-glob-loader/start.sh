@@ -1,14 +1,16 @@
 #!/bin/bash
 
 set -eo pipefail
+
 HOST_IP=`../host-ip.sh`
-
-npm i
 export HOST_IP && docker-compose up -d #--force-recreate
-printf "giving extra time for containers to be fully up and running... \n\n\n"
 
-(sleep 2 && babel-node distribution) &
-(sleep 4 && xterm -hold -e 'babel-node application') &
-(sleep 4 && xterm -hold -e 'babel-node application') &
-(sleep 4 && xterm -hold -e 'babel-node application') &
+(cd application && npm i) & (cd distribution && npm i) &
+wait
+
+printf "giving extra time for containers to be fully up and running... \n\n\n"
+(sleep 1 && cd distribution && npm start) &
+(sleep 3 && xterm -hold -e 'cd application && npm start') &
+(sleep 3 && xterm -hold -e 'cd application && npm start') &
+(sleep 3 && xterm -hold -e 'cd application && npm start') &
 wait

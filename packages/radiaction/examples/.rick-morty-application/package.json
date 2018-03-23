@@ -1,4 +1,5 @@
 {
+  "name": "rick-morty-application",
   "version": "1.0.0",
   "private": true,
   "author": "Quadric ApS",
@@ -7,7 +8,9 @@
     "start": "babel-node index.js"
   },
   "dependencies": {
-    "glob": "~7.1.2",
     "lodash": "~4.17.5"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0"
   }
 }
