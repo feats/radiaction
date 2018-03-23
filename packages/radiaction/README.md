@@ -5,7 +5,6 @@
 <strong>Powerful nodejs library for building seamless distributed applications.</strong><br />
 <sub>Radiaction makes it painless for Developers to write distributed apps and for DevOps to keep everything running.</sub>
 </p>
-<br>
 
 <p align="center">
   [ <a href="./examples">Check  examples 👌</a> | <a href="#api">Read the API 🤓</a> ]
@@ -85,7 +84,7 @@ compose(...functions: Array<Function>)
 
 Composes functions from right to left. You might want to use it to compose multiple higher-order functions into a single higher-order function.
 
-This is a functional programming utility, and is included here as a convenience. It works exactly like the function of the same name in [Recompose](https://github.com/acdlite/recompose/blob/master/docs/API.md#compose), [Redux](https://github.com/reactjs/redux/blob/master/docs/api/compose.md), or [lodash's `flowRight()`](https://lodash.com/docs/4.17.5#flowRight).
+This is a functional programming utility, and is included here as a convenience. It works exactly like the function of the same name in [Recompose](https://github.com/acdlite/recompose/blob/master/docs/API.md#compose) and [Redux](https://github.com/reactjs/redux/blob/master/docs/api/compose.md), or [lodash's `flowRight()`](https://lodash.com/docs/4.17.5#flowRight).
 
 ### Distributed side
 

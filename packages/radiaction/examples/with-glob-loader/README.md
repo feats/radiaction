@@ -18,7 +18,7 @@ Dependencies:
 
 ## Code Structure
 
-* `/application` is a symlink to the [rick-morty-application](../.rick-morty-application). It contains the independent logic of the application (actions, reactions and a controller).
+* `/application` is a symlink to the ["Rick and Morty" application](../.rick-morty-application). It contains the independent logic of the application (actions, reactions and a controller).
 * `/distribution` contains the runners that will respond to the applications' actions, processing the reactions.
 
 ## Infrastructure
