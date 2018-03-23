@@ -8,7 +8,6 @@
     "start": "babel-node index.js"
   },
   "dependencies": {
-    "glob": "~7.1.2",
     "sandboxjs": "~4.2.2"
   },
   "devDependencies": {
