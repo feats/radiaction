@@ -8,6 +8,7 @@
     "start": "babel-node index.js"
   },
   "dependencies": {
+    "radiaction": "latest",
     "sandboxjs": "~4.2.2"
   },
   "devDependencies": {

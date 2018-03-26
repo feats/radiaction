@@ -8,7 +8,8 @@
     "start": "babel-node index.js"
   },
   "dependencies": {
-    "lodash": "~4.17.5"
+    "lodash": "~4.17.5",
+    "radiaction": "latest"
   },
   "devDependencies": {
     "@babel/cli": "^7.0.0-beta.42",

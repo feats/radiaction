@@ -8,7 +8,8 @@
     "start": "babel-node index.js"
   },
   "dependencies": {
-    "glob": "~7.1.2"
+    "glob": "~7.1.2",
+    "radiaction": "latest"
   },
   "devDependencies": {
     "@babel/cli": "^7.0.0-beta.42",
