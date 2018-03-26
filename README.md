@@ -18,7 +18,7 @@
 * **Separation of concerns:** DevOps don't need to interfere on how developers are writting their functions. Scaling and even changing the infrasctructure can be done independently by DevOps with no change in the application code.
 
 > **WARNING!** This is an experimental project. It's use is not yet recommended for production.
-
+> 
 > Please, consider helping us on the [path to stability](https://github.com/Quadric/radiaction/milestone/1) by contributing to this project 🍻💪
 
 ![divider](.github/divider.png)
@@ -43,7 +43,7 @@
 ##### emitter
 
 ```typescript
-import { emitter } from '@quadric/radiaction'
+import { emitter } from 'radiaction'
 
 emitter(actionsMap: Object): Object
 ```
@@ -56,7 +56,7 @@ For each action, wraps it with a function that:
 ##### topicfy
 
 ```typescript
-import { topicfy } from '@quadric/radiaction'
+import { topicfy } from 'radiaction'
 
 topicfy(moduleName: String)(actionsMap: Object): Object
 ```
@@ -66,7 +66,7 @@ Sanitizes the functions names while combining them with the provided key (`modul
 ##### waiter
 
 ```typescript
-import { waiter } from '@quadric/radiaction'
+import { waiter } from 'radiaction'
 
 waiter(actionsMap: Object): Object
 ```
@@ -81,7 +81,7 @@ For each action, wraps it with a function that:
 ##### compose
 
 ```typescript
-import { compose } from '@quadric/radiaction'
+import { compose } from 'radiaction'
 
 compose(...functions: Array<Function>)
 ```
@@ -95,7 +95,7 @@ This is a functional programming utility, and is included here as a convenience.
 ##### createTopics
 
 ```typescript
-import { createTopics } from '@quadric/radiaction'
+import { createTopics } from 'radiaction'
 
 createTopics(actionsMap: Object): Promise
 ```
@@ -105,7 +105,7 @@ Initializes the topics for every action. It only needs to be executed once.
 ##### runner
 
 ```typescript
-import { runner } from '@quadric/radiaction'
+import { runner } from 'radiaction'
 
 runner(reactionsMap: Object): Promise
 ```
