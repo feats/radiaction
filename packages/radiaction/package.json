@@ -1,12 +1,28 @@
 {
   "name": "radiaction",
-  "version": "1.0.0-experimental.1",
-  "author": "Victor Duarte - Quadric ApS",
+  "version": "1.0.0-experimental.3",
+  "author": {
+    "name" : "Victor Duarte",
+    "url" : "https://github.com/zvictor"
+  },
   "license": "UNLICENSED",
   "main": "build/index.js",
   "files": [
     "build/"
   ],
+  "repository" : "github:Quadric/radiaction.git",
+  "homepage": "https://github.com/Quadric/radiaction",
+  "bugs": "https://github.com/Quadric/radiaction/issues",
+  "keywords": [
+    "action-reaction",
+    "distributed-computing",
+    "distributed-systems",
+    "kafka",
+    "message-broker",
+    "message-bus",
+    "message-queue"
+  ],
+  "description": "Powerful library for building seamless distributed applications.",
   "scripts": {
     "build": "babel src --source-maps --out-dir ./build --ignore node_modules,build > /dev/null",
     "prepublish": "npm run build"
