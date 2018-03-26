@@ -1,4 +1,13 @@
 {
-  "presets": ["@babel/preset-env"],
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "targets": {
+          "node": "4.2.0"
+        }
+      }
+    ]
+  ],
   "plugins": ["@babel/plugin-proposal-object-rest-spread"]
 }

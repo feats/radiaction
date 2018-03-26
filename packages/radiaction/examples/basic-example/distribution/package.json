@@ -7,10 +7,9 @@
   "scripts": {
     "start": "babel-node index.js"
   },
-  "dependencies": {
-
-  },
+  "dependencies": {},
   "devDependencies": {
-    "babel-cli": "^6.26.0"
+    "@babel/cli": "^7.0.0-beta.42",
+    "@babel/core": "^7.0.0-beta.42"
   }
 }

@@ -1,4 +1,4 @@
-const { createTopics, runner } = require('../../../src')
+const { createTopics, runner } = require('radiaction')
 const { ACTIONS_GLOB, REACTIONS_GLOB } = require('./config')
 const loadAssets = require('./loadAssets')
 
