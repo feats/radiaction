@@ -17,6 +17,7 @@ read -r WEBTASK_TOKEN
 printf "giving extra time for containers to be fully up and running... \n\n\n"
 (sleep 1 && cd distribution && export WEBTASK_TOKEN && npm start) &
 (sleep 3 && xterm -hold -e 'cd application && npm start') &
+(sleep 3 && xterm -hold -e 'cd application && npm start') &
 npx wt logs
 wait
 
