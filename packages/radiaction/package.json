@@ -25,7 +25,8 @@
   "description": "Powerful library for building seamless distributed applications.",
   "scripts": {
     "build": "babel src --source-maps --out-dir ./build --ignore node_modules,build > /dev/null",
-    "prepublish": "npm run build"
+    "prepublish": "npm run build",
+    "test": "ava"
   },
   "dependencies": {
     "chalk": "~2.3.2",
@@ -38,6 +39,22 @@
     "@babel/cli": "~7.0.0-beta.42",
     "@babel/core": "~7.0.0-beta.42",
     "@babel/plugin-proposal-object-rest-spread": "~7.0.0-beta.42",
-    "@babel/preset-env": "~7.0.0-beta.42"
+    "@babel/polyfill": "~7.0.0-beta.42",
+    "@babel/preset-env": "~7.0.0-beta.42",
+    "@babel/register": "~7.0.0-beta.42",
+    "ava": "~1.0.0-beta.3",
+    "mock-require": "~3.0.1"
+  },
+  "ava": {
+    "require": [
+      "@babel/register",
+      "@babel/polyfill"
+    ],
+    "files": [
+      "src/**/*.test.js"
+    ],
+    "sources": [
+      "src/**"
+    ]
   }
 }
