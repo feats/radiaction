@@ -17,6 +17,21 @@ test('flag is ON', t => {
   t.is(processed.d.__radiaction.emit, true)
 })
 
+test('previous metadata is not lost', t => {
+  const action = () => 1
+  action.__radiaction = {
+    x: -1,
+    y: -2,
+    z: -3,
+  }
+
+  const processed = emitter({
+    a: action,
+  })
+
+  t.deepEqual(processed.a.__radiaction, { emit: true, z: -3, y: -2, x: -1 })
+})
+
 test(`names don't change`, t => {
   const processed = emitter({
     a: () => 1,
