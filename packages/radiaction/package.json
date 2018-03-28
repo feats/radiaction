@@ -43,9 +43,13 @@
     "@babel/preset-env": "~7.0.0-beta.42",
     "@babel/register": "~7.0.0-beta.42",
     "ava": "~1.0.0-beta.3",
-    "mock-require": "~3.0.1"
+    "mock-require": "~3.0.1",
+    "sinon": "~4.4.9"
   },
   "ava": {
+    "failFast": true,
+    "failWithoutAssertions": true,
+    "tap": false,
     "require": [
       "@babel/register",
       "@babel/polyfill"
@@ -54,7 +58,7 @@
       "src/**/*.test.js"
     ],
     "sources": [
-      "src/**"
+      "src/**/*.js"
     ]
   }
 }

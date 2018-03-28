@@ -1,5 +1,6 @@
 import test from 'ava'
-import noKafka from '../mocks/no-kafka'
+import sinon from 'sinon'
+import noKafkaMock from '../mocks/no-kafka'
 import emitter from './emitter'
 
 test('flag is ON', t => {
@@ -16,7 +17,7 @@ test('flag is ON', t => {
   t.is(processed.d.__radiaction.emmit, true)
 })
 
-test('name stays', t => {
+test(`names don't change`, t => {
   const processed = emitter({
     a: () => 1,
     b: () => 2,
@@ -28,4 +29,24 @@ test('name stays', t => {
   t.is(processed.b.name, 'b')
   t.is(processed.c.name, 'c')
   t.is(processed.d.name, 'd')
+})
+
+test('arguments are passed down', async t => {
+  const actions = {
+    a: sinon.spy().named('a'),
+    b: sinon.spy().named('b'),
+    c: sinon.spy().named('c'),
+    d: sinon.spy().named('d'),
+  }
+
+  const processed = emitter(actions)
+  await processed.a('a0', 'a1', 'a3')
+  await processed.b('b0', 'b1', 'b3')
+  await processed.c('c0', 'c1', 'c3')
+  await processed.d('d0', 'd1', 'd3')
+
+  t.true(actions.a.calledOnceWithExactly('a0', 'a1', 'a3'), actions.a.args.toString())
+  t.true(actions.b.calledOnceWithExactly('b0', 'b1', 'b3'), actions.b.args.toString())
+  t.true(actions.c.calledOnceWithExactly('c0', 'c1', 'c3'), actions.c.args.toString())
+  t.true(actions.d.calledOnceWithExactly('d0', 'd1', 'd3'), actions.d.args.toString())
 })
