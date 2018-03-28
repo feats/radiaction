@@ -50,3 +50,45 @@ test('arguments are passed down', async t => {
   t.true(actions.c.calledOnceWithExactly('c0', 'c1', 'c3'), actions.c.args.toString())
   t.true(actions.d.calledOnceWithExactly('d0', 'd1', 'd3'), actions.d.args.toString())
 })
+
+test('message broker is called', async t => {
+  const processed = emitter({
+    a: () => 1,
+    b: () => 2,
+    c: () => 3,
+    d: () => 4,
+  })
+
+  const output = {
+    a: await processed.a(),
+    b: await processed.b(),
+    c: await processed.c(),
+    d: await processed.d(),
+  }
+
+  t.is(output.a[0].partition.constructor, Number)
+  t.is(output.a[0].offset.constructor, Number)
+  t.is(output.b[0].partition.constructor, Number)
+  t.is(output.b[0].offset.constructor, Number)
+  t.is(output.c[0].partition.constructor, Number)
+  t.is(output.c[0].offset.constructor, Number)
+  t.is(output.d[0].partition.constructor, Number)
+  t.is(output.d[0].offset.constructor, Number)
+
+  t.deepEqual(output.a, [
+    { topic: 'a', error: null, partition: output.a[0].partition, offset: output.a[0].offset },
+  ])
+  t.deepEqual(output.b, [
+    { topic: 'b', error: null, partition: output.b[0].partition, offset: output.b[0].offset },
+  ])
+  t.deepEqual(output.c, [
+    { topic: 'c', error: null, partition: output.c[0].partition, offset: output.c[0].offset },
+  ])
+  t.deepEqual(output.d, [
+    { topic: 'd', error: null, partition: output.d[0].partition, offset: output.d[0].offset },
+  ])
+})
+
+test.after.always(() => {
+  noKafkaMock.stopAll()
+})

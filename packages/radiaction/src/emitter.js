@@ -10,8 +10,8 @@ function wrap(action) {
     producer.close()
   })
 
-  const newAction = async (...args) =>
-    await producer.send({
+  const newAction = (...args) =>
+    producer.send({
       topic: action.name,
       message: action.apply(action, args),
     })
