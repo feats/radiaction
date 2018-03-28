@@ -2,13 +2,16 @@ const _ = require('lodash')
 const { Producer } = require('no-kafka')
 const { keepName } = require('./helpers')
 
+const stopAll = []
+
+process.on('exit', () => {
+  stopAll.forEach(stop => stop())
+})
+
 function wrap(action) {
   const producer = new Producer()
+  stopAll.push(producer.close)
   producer.init()
-
-  process.on('exit', () => {
-    producer.close()
-  })
 
   const newAction = (...args) =>
     producer.send({
