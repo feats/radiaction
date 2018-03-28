@@ -18,7 +18,7 @@ function wrap(action) {
 
   newAction.__radiaction = {
     ...action.__radiaction,
-    emmit: true,
+    emit: true,
   }
 
   return keepName(newAction, action)

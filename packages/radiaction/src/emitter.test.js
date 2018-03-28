@@ -11,10 +11,10 @@ test('flag is ON', t => {
     d: () => 4,
   })
 
-  t.is(processed.a.__radiaction.emmit, true)
-  t.is(processed.b.__radiaction.emmit, true)
-  t.is(processed.c.__radiaction.emmit, true)
-  t.is(processed.d.__radiaction.emmit, true)
+  t.is(processed.a.__radiaction.emit, true)
+  t.is(processed.b.__radiaction.emit, true)
+  t.is(processed.c.__radiaction.emit, true)
+  t.is(processed.d.__radiaction.emit, true)
 })
 
 test(`names don't change`, t => {
