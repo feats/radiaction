@@ -1,6 +1,6 @@
 import test from 'ava'
 import sinon from 'sinon'
-import noKafkaMock from '../mocks/no-kafka'
+import NoKafkaMock from '../mocks/no-kafka'
 import emitter from './emitter'
 
 test('flag is ON', t => {
@@ -66,44 +66,42 @@ test('arguments are passed down', async t => {
   t.true(actions.d.calledOnceWithExactly('d0', 'd1', 'd3'), actions.d.args.toString())
 })
 
-test('message broker is called', async t => {
+test('message broker is called with compatible descriptor', async t => {
   const processed = emitter({
-    a: () => 1,
-    b: () => 2,
-    c: () => 3,
-    d: () => 4,
+    a: () => 'A',
+    b: () => ({ b: 'B' }),
+    c: () => ({ foo: 'bar', value: 'C' }),
+    d: () => ({ value: 'D' }),
+    e: () => ({ key: 'e', value: 'E' }),
   })
+
+  t.throws(processed.b, `plain objects sent to a emitter need to contain the 'value' field`)
+  t.throws(processed.c, `plain objects sent to a emitter can only contain fields 'value' and 'key'`)
 
   const output = {
     a: await processed.a(),
-    b: await processed.b(),
-    c: await processed.c(),
     d: await processed.d(),
+    e: await processed.e(),
   }
 
   t.is(output.a[0].partition.constructor, Number)
   t.is(output.a[0].offset.constructor, Number)
-  t.is(output.b[0].partition.constructor, Number)
-  t.is(output.b[0].offset.constructor, Number)
-  t.is(output.c[0].partition.constructor, Number)
-  t.is(output.c[0].offset.constructor, Number)
   t.is(output.d[0].partition.constructor, Number)
   t.is(output.d[0].offset.constructor, Number)
+  t.is(output.e[0].partition.constructor, Number)
+  t.is(output.e[0].offset.constructor, Number)
 
   t.deepEqual(output.a, [
     { topic: 'a', error: null, partition: output.a[0].partition, offset: output.a[0].offset },
   ])
-  t.deepEqual(output.b, [
-    { topic: 'b', error: null, partition: output.b[0].partition, offset: output.b[0].offset },
-  ])
-  t.deepEqual(output.c, [
-    { topic: 'c', error: null, partition: output.c[0].partition, offset: output.c[0].offset },
-  ])
   t.deepEqual(output.d, [
     { topic: 'd', error: null, partition: output.d[0].partition, offset: output.d[0].offset },
+  ])
+  t.deepEqual(output.e, [
+    { topic: 'e', error: null, partition: output.e[0].partition, offset: output.e[0].offset },
   ])
 })
 
 test.after.always(() => {
-  noKafkaMock.stopAll()
+  NoKafkaMock.stopAll()
 })
