@@ -35,10 +35,18 @@ function wrap(action) {
   producer.init()
 
   const newAction = (...args) =>
-    producer.send({
-      topic: action.name,
-      message: forceStructure(action.apply(action, args)),
-    })
+    producer
+      .send({
+        topic: action.name,
+        message: forceStructure(action.apply(action, args)),
+      })
+      .then(results => {
+        if (!results || results.length !== 1) {
+          throw new Error(`Unexpected data received from message broker: ${results}`)
+        }
+
+        return results[0]
+      })
 
   newAction.__radiaction = {
     ...action.__radiaction,

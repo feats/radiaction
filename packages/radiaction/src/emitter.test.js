@@ -87,22 +87,33 @@ test('message broker is called with compatible descriptor', async t => {
     e: await processed.e(),
   }
 
-  t.is(output.a[0].partition.constructor, Number)
-  t.is(output.a[0].offset.constructor, Number)
-  t.is(output.d[0].partition.constructor, Number)
-  t.is(output.d[0].offset.constructor, Number)
-  t.is(output.e[0].partition.constructor, Number)
-  t.is(output.e[0].offset.constructor, Number)
+  t.is(output.a.partition.constructor, Number)
+  t.is(output.a.offset.constructor, Number)
+  t.is(output.d.partition.constructor, Number)
+  t.is(output.d.offset.constructor, Number)
+  t.is(output.e.partition.constructor, Number)
+  t.is(output.e.offset.constructor, Number)
 
-  t.deepEqual(output.a, [
-    { topic: 'a', error: null, partition: output.a[0].partition, offset: output.a[0].offset },
-  ])
-  t.deepEqual(output.d, [
-    { topic: 'd', error: null, partition: output.d[0].partition, offset: output.d[0].offset },
-  ])
-  t.deepEqual(output.e, [
-    { topic: 'e', error: null, partition: output.e[0].partition, offset: output.e[0].offset },
-  ])
+  t.deepEqual(output.a, {
+    topic: 'a',
+    error: null,
+    partition: output.a.partition,
+    offset: output.a.offset,
+  })
+
+  t.deepEqual(output.d, {
+    topic: 'd',
+    error: null,
+    partition: output.d.partition,
+    offset: output.d.offset,
+  })
+
+  t.deepEqual(output.e, {
+    topic: 'e',
+    error: null,
+    partition: output.e.partition,
+    offset: output.e.offset,
+  })
 })
 
 test.after.always(() => {
