@@ -75,8 +75,11 @@ test('message broker is called with compatible descriptor', async t => {
     e: () => ({ key: 'e', value: 'E' }),
   })
 
-  t.throws(processed.b, `plain objects sent to a emitter need to contain the 'value' field`)
-  t.throws(processed.c, `plain objects sent to a emitter can only contain fields 'value' and 'key'`)
+  await t.throws(processed.b, `plain objects sent to a emitter need to contain the 'value' field`)
+  await t.throws(
+    processed.c,
+    `plain objects sent to a emitter can only contain fields 'value' and 'key'`
+  )
 
   const output = {
     a: await processed.a(),
