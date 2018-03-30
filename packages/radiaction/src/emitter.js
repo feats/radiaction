@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const { Producer } = require('no-kafka')
-const { keepName } = require('./helpers')
+const { actionName, keepName } = require('./helpers')
 
 const stopAll = []
 
@@ -37,7 +37,7 @@ function wrap(action) {
   const newAction = (...args) =>
     producer
       .send({
-        topic: action.name,
+        topic: actionName(action),
         message: forceStructure(action.apply(action, args)),
       })
       .then(results => {

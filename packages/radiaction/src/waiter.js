@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const { SimpleConsumer, LATEST_OFFSET } = require('no-kafka')
-const { keepName } = require('./helpers')
+const { keepName, actionName } = require('./helpers')
 const { IDLE_TIMEOUT, RESULT_SUFFIX, WAITER_TIMEOUT } = require('./config')
 
 const stopAll = []
@@ -59,7 +59,9 @@ function validateOutput(output) {
   return output
 }
 
-async function setup(key) {
+async function setup(action) {
+  const key = actionName(action)
+
   if (initiated[key]) {
     return true
   }
@@ -121,7 +123,7 @@ function spread({ topic, partition, offset }) {
 
 function wrap(action) {
   const newAction = async (...args) => {
-    await setup(action.name)
+    await setup(action)
     const input = await action.apply(action, args)
     validateInput(input)
 
