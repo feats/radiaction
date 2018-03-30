@@ -12,7 +12,7 @@ process.on('exit', () => {
   stopAll.forEach(stop => stop())
 })
 
-function validateStructure(input) {
+function validateInput(input) {
   if (!_.isPlainObject(input)) {
     throw new Error(
       `waiters expect to receive an object containing 'topic', 'partition' and 'offset' fields`
@@ -38,6 +38,27 @@ function validateStructure(input) {
   return input
 }
 
+function validateOutput(output) {
+  const keys = new Set(Object.keys(output))
+
+  if (!keys.has('key')) {
+    throw new Error(`waiters require output objects to contain the 'key' field`)
+  }
+
+  if (!keys.has('value')) {
+    throw new Error(`waiters require output objects to contain the 'value' field`)
+  }
+
+  keys.delete('value')
+  keys.delete('key')
+
+  if (keys.size > 0) {
+    throw new Error(`output objects returned to a waiter can only contain fields 'value' and 'key'`)
+  }
+
+  return output
+}
+
 async function setup(key) {
   if (initiated[key]) {
     return true
@@ -55,9 +76,7 @@ async function setup(key) {
       { time: LATEST_OFFSET },
       (messageSet, topic, partition) => {
         messageSet.forEach(({ message }) => {
-          if (!_.has(message, 'key')) {
-            throw new Error(`waiters can't handle falsy keys`)
-          }
+          validateOutput(message)
 
           const identifier = `${topic}:${partition}:${message.key.toString('utf8')}`
           const value = message.value && message.value.toString('utf8')
@@ -103,10 +122,10 @@ function spread({ topic, partition, offset }) {
 function wrap(action) {
   const newAction = async (...args) => {
     await setup(action.name)
-    const output = await action.apply(action, args)
-    validateStructure(output)
+    const input = await action.apply(action, args)
+    validateInput(input)
 
-    return await spread(output)
+    return await spread(input)
   }
 
   newAction.__radiaction = {

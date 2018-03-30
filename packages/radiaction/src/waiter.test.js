@@ -91,7 +91,7 @@ test('forces actions to return compatible descriptor', async t => {
     `waiters expect to receive an object containing a valid 'offset' field`
   )
   await t.throws(processed.effective, `Error: E`)
-  await emit('fantastic.output', { key: 0 }) // emits whatever just to avoid 'f' from timing out
+  await emit('fantastic.output', { key: 0, value: '' }) // emits whatever just to avoid 'f' from timing out
   await t.notThrows(processed.fantastic)
 })
 
@@ -105,28 +105,32 @@ test('reactions are returned by the waiter', async t => {
     festive: () => ({ topic: 'festive', partition: 0, offset: 0 }),
   })
 
-  const reactions = {
-    a: processed.awesome(),
-    b: processed.bravery(),
-    c: processed.comfort(),
-    d: processed.dignity(),
-    e: processed.empathy(),
-    f: processed.festive(),
-  }
-
+  const a = processed.awesome()
   await emit('awesome.output', { key: 0, value: 'reaction of a' })
-  await emit('bravery.output', { key: 0, value: 'reaction of b' })
-  await emit('comfort.output', { key: 0, value: 'reaction of c' })
-  await emit('dignity.output', { key: 0, value: 'reaction of d' })
-  await emit('empathy.output', { key: 0, value: 'reaction of e' })
-  await emit('festive.output', { key: 0, value: 'reaction of f' })
+  t.is(await a, 'reaction of a')
 
-  t.is(await reactions.a, 'reaction of a')
-  t.is(await reactions.b, 'reaction of b')
-  t.is(await reactions.c, 'reaction of c')
-  t.is(await reactions.d, 'reaction of d')
-  t.is(await reactions.e, 'reaction of e')
-  t.is(await reactions.f, 'reaction of f')
+  await t.throws(async () => {
+    await emit('bravery.output', { key: 0 })
+    await processed.bravery()
+  }, `waiters require output objects to contain the 'value' field`)
+
+  await t.throws(async () => {
+    await emit('comfort.output', { value: 'reaction of c' })
+    await processed.comfort()
+  }, `waiters require output objects to contain the 'key' field`)
+
+  await t.throws(async () => {
+    await emit('dignity.output', { key: 0, value: 'reaction of d', d: 'dignity' })
+    await processed.dignity()
+  }, `output objects returned to a waiter can only contain fields 'value' and 'key'`)
+
+  const e = processed.empathy()
+  await emit('empathy.output', { key: 0, value: 'reaction of e' })
+  t.is(await e, 'reaction of e')
+
+  const f = processed.festive()
+  await emit('festive.output', { key: 0, value: 'reaction of f' })
+  t.is(await f, 'reaction of f')
 })
 
 test.after.always(() => {
