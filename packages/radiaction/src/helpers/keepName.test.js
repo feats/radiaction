@@ -1,5 +1,5 @@
 // it is not running
-// https://github.com/Quadric/radiaction/issues/3
+// https://github.com/Quadric/radiaction/issues/5
 
 import test from 'ava'
 import keepName from './keepName'
