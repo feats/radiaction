@@ -11,7 +11,7 @@
     "radiaction": "latest"
   },
   "devDependencies": {
-    "@babel/cli": "^7.0.0-beta.42",
-    "@babel/core": "^7.0.0-beta.42"
+    "@babel/core": "~7.0.0-beta.42",
+    "@babel/node": "~7.0.0-beta.42"
   }
 }

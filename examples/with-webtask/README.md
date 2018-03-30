@@ -27,7 +27,7 @@ Dependencies:
 * 1 application instances
 * 1 Kafka cluster
 
-![Infrastructure's graph representation](https://g.gravizo.com/source/custom_mark?https%3A%2F%2Frawgit.com%2FQuadric%2Fradiaction%2Fmaster%2Fexamples%2Fwith-webtask%2FREADME.md)
+![Infrastructure's graph representation](https://g.gravizo.com/source/svg/custom_mark?https%3A%2F%2Frawgit.com%2FQuadric%2Fradiaction%2Fmaster%2Fexamples%2Fwith-webtask%2FREADME.md)
 <details> 
 <summary></summary>
 custom_mark
