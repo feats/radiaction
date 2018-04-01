@@ -14,3 +14,18 @@ test('flag is ON', t => {
   t.is(processed.charming.__radiaction.run, true)
   t.is(processed.delightful.__radiaction.run, true)
 })
+
+test('previous metadata is not lost', t => {
+  const action = () => 'A'
+  action.__radiaction = {
+    x: -1,
+    y: -2,
+    z: -3,
+  }
+
+  const processed = runner({
+    amazing: action,
+  })
+
+  t.deepEqual(processed.amazing.__radiaction, { run: true, z: -3, y: -2, x: -1 })
+})
