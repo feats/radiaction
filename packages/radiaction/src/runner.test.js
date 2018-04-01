@@ -29,3 +29,17 @@ test('previous metadata is not lost', t => {
 
   t.deepEqual(processed.amazing.__radiaction, { run: true, z: -3, y: -2, x: -1 })
 })
+
+test(`names don't change`, t => {
+  const processed = runner({
+    amusing: () => 'A',
+    brave: () => ({ b: 'B' }),
+    calm: () => ({ value: 'C' }),
+    distinguished: () => ({ key: 'd', value: 'D' }),
+  })
+
+  t.is(processed.amusing.name, 'amusing')
+  t.is(processed.brave.name, 'brave')
+  t.is(processed.calm.name, 'calm')
+  t.is(processed.distinguished.name, 'distinguished')
+})
