@@ -9,7 +9,7 @@ process.on('exit', () => {
   stopAll.forEach(stop => stop())
 })
 
-const setup = async (reaction, key) => {
+const setup = async (reaction, actionName) => {
   const producer = new Producer()
   const consumer = new SimpleConsumer({ idleTimeout: IDLE_TIMEOUT })
 
@@ -19,19 +19,17 @@ const setup = async (reaction, key) => {
   producer.init()
   await consumer.init()
   return await consumer.subscribe(
-    key,
+    actionName,
     0,
     { time: LATEST_OFFSET },
     (messageSet, topic, partition) => {
       messageSet.forEach(async m => {
-        const result = await reaction(
-          m.message.value.toString('utf8'),
-          m.message.key && m.message.key.toString('utf8')
-        )
+        const { value, key } = m.message
+        const result = await reaction(value && value.toString('utf8'), key && key.toString('utf8'))
 
         producer
           .send({
-            topic: `${key}${RESULT_SUFFIX}`,
+            topic: `${actionName}${RESULT_SUFFIX}`,
             partition,
             message: {
               value: result || '',
