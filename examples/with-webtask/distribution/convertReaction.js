@@ -8,7 +8,7 @@ if (!process.env.WEBTASK_TOKEN) {
 const profile = Sandbox.fromToken(process.env.WEBTASK_TOKEN)
 
 const wrapper = code => `
-  const reaction = ${code}
+  function reaction ${code}
 
   module.exports = (context, callback) => {
     try {

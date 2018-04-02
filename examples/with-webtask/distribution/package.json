@@ -8,11 +8,11 @@
     "start": "babel-node index.js"
   },
   "dependencies": {
-    "radiaction": "latest",
+    "radiaction": "^1.0.0-experimental.3",
     "sandboxjs": "~4.2.2"
   },
   "devDependencies": {
-    "@babel/core": "~7.0.0-beta.42",
-    "@babel/node": "~7.0.0-beta.42"
+    "@babel/core": "7.0.0-beta.43",
+    "@babel/node": "7.0.0-beta.43"
   }
 }

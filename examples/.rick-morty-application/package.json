@@ -1,5 +1,4 @@
 {
-  "name": "rick-morty-application",
   "version": "1.0.0",
   "private": true,
   "author": "Quadric ApS",
@@ -9,10 +8,10 @@
   },
   "dependencies": {
     "lodash": "~4.17.5",
-    "radiaction": "latest"
+    "radiaction": "^1.0.0-experimental.3"
   },
   "devDependencies": {
-    "@babel/core": "~7.0.0-beta.42",
-    "@babel/node": "~7.0.0-beta.42"
+    "@babel/core": "7.0.0-beta.43",
+    "@babel/node": "7.0.0-beta.43"
   }
 }
