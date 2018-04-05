@@ -33,7 +33,7 @@
     "change-case": "~3.0.2",
     "kafka-node": "~2.4.1",
     "lodash": "~4.17.5",
-    "no-kafka": "~3.2.8"
+    "no-kafka": "~3.2.9"
   },
   "devDependencies": {
     "@babel/cli": "7.0.0-beta.43",
@@ -43,7 +43,7 @@
     "@babel/preset-env": "7.0.0-beta.43",
     "@babel/register": "7.0.0-beta.43",
     "ava": "~1.0.0-beta.3",
-    "mock-require": "~3.0.1",
+    "mock-require": "~3.0.2",
     "sinon": "~4.4.9"
   },
   "ava": {

@@ -1,52 +1,61 @@
+const _ = require('lodash')
+const { keepName, actionName } = require('./helpers')
 const { Producer, SimpleConsumer, LATEST_OFFSET } = require('no-kafka')
 const { RESULT_SUFFIX, IDLE_TIMEOUT } = require('./config')
 
-export default reactions => {
+const stopAll = []
+
+process.on('exit', () => {
+  stopAll.forEach(stop => stop())
+})
+
+const setup = async (reaction, actionName) => {
   const producer = new Producer()
+  const consumer = new SimpleConsumer({ idleTimeout: IDLE_TIMEOUT })
+
+  stopAll.push(producer.close)
+  stopAll.push(consumer.close)
+
   producer.init()
+  await consumer.init()
+  return await consumer.subscribe(
+    actionName,
+    0,
+    { time: LATEST_OFFSET },
+    (messageSet, topic, partition) => {
+      messageSet.forEach(async m => {
+        const { value, key } = m.message
+        const result = await reaction(value && value.toString('utf8'), key && key.toString('utf8'))
 
-  // close connection when process is killed.
-  process.on('exit', () => {
-    producer.close()
-  })
-
-  const consumers = Object.keys(reactions).map(key => {
-    const consumer = new SimpleConsumer({ idleTimeout: IDLE_TIMEOUT })
-
-    // close connection when process is killed.
-    process.on('exit', () => {
-      consumer.close()
-    })
-
-    return consumer.init().then(() => {
-      return consumer.subscribe(key, 0, { time: LATEST_OFFSET }, (messageSet, topic, partition) => {
-        messageSet.forEach(async m => {
-          const reaction = reactions[key]
-
-          const result = await reaction(
-            m.message.value.toString('utf8'),
-            m.message.key && m.message.key.toString('utf8')
-          )
-
-          producer
-            .send({
-              topic: `${key}${RESULT_SUFFIX}`,
-              partition,
-              message: {
-                value: result || '',
-                key: m.offset,
-              },
-            })
-            // .then(results =>
-            //   results.filter(result => result.error).map(result => throwError(result.error))
-            // )
-            .catch(e => {
-              throw new Error(e)
-            })
-        })
+        producer
+          .send({
+            topic: `${actionName}${RESULT_SUFFIX}`,
+            partition,
+            message: {
+              value: result || '',
+              key: m.offset,
+            },
+          })
+          // .then(results =>
+          //   results.filter(result => result.error).map(result => throwError(result.error))
+          // )
+          .catch(e => {
+            throw new Error(e)
+          })
       })
-    })
-  })
-
-  return Promise.all(consumers)
+    }
+  )
 }
+
+function wrap(reaction, key) {
+  const newReaction = () => setup(reaction, key)
+
+  newReaction.__radiaction = {
+    ...reaction.__radiaction,
+    run: true,
+  }
+
+  return keepName(newReaction, reaction)
+}
+
+module.exports = descriptor => _.mapValues(descriptor, wrap)
